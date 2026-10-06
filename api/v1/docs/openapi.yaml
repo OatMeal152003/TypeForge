@@ -1,0 +1,105 @@
+openapi: 3.0.3
+info:
+  title: TypeForge API
+  version: 1.0.0
+  description: REST v1 for TypeForge typing trainer. Same-origin session cookie + CSRF. Legacy api/*.php remain as shims.
+servers:
+  - url: /TypeForge/api/v1
+    description: XAMPP local
+  - url: /api/v1
+    description: Deployed root
+paths:
+  /texts:
+    get:
+      summary: Generate typing text
+      parameters:
+        - {name: mode, in: query, schema: {type: string, enum: [words, time, quote, code], default: words}}
+        - {name: count, in: query, schema: {type: integer, minimum: 5, maximum: 100, default: 25}}
+        - {name: punctuation, in: query, schema: {type: string}}
+        - {name: numbers, in: query, schema: {type: string}}
+      responses:
+        '200': {description: '{success, message, data: {text, mode, count}}'}
+  /sessions:
+    post:
+      summary: Submit a typing result (server recalculates WPM)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode, mode_value, duration_seconds, total_keystrokes, error_count, csrf_token]
+              properties:
+                mode: {type: string, enum: [words, time, quote, code]}
+                mode_value: {type: integer}
+                has_punctuation: {type: integer}
+                has_numbers: {type: integer}
+                duration_seconds: {type: integer}
+                total_keystrokes: {type: integer}
+                error_count: {type: integer}
+                csrf_token: {type: string}
+      responses:
+        '201': {description: Created}
+        '401': {description: Unauthorized}
+        '422': {description: Implausible metrics}
+        '429': {description: Rate limited (3s)}
+    get:
+      summary: Paged own sessions
+      parameters:
+        - {name: page, in: query, schema: {type: integer, default: 1}}
+        - {name: limit, in: query, schema: {type: integer, default: 15, maximum: 50}}
+      responses:
+        '200': {description: '{items, page, limit, total, total_pages}'}
+  /sessions/{id}:
+    get:
+      summary: Get one own session
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: integer}}
+      responses:
+        '200': {description: Session row}
+        '404': {description: Not found}
+  /leaderboard:
+    get:
+      summary: Top 50 leaderboard
+      parameters:
+        - {name: metric, in: query, schema: {type: string, enum: [net_wpm, raw_wpm, accuracy], default: net_wpm}}
+        - {name: mode, in: query, schema: {type: string, default: all}}
+        - {name: timeframe, in: query, schema: {type: string, enum: [all_time, monthly, daily], default: all_time}}
+      responses:
+        '200': {description: '{metric, rankings[]}'}
+  /stats/summary:
+    get:
+      summary: Dashboard aggregates
+      responses:
+        '200': {description: '{total_tests, best_wpm, avg_wpm, avg_accuracy, total_time_seconds}'}
+  /stats/history:
+    get:
+      summary: Last N sessions ASC for charts
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, default: 50, maximum: 100}}
+      responses:
+        '200': {description: '{items[]}'}
+  /stats/recent:
+    get:
+      summary: Last N sessions DESC
+      responses:
+        '200': {description: '{items[]}'}
+  /me:
+    get:
+      summary: Current user + settings
+      responses:
+        '200': {description: '{user, settings}'}
+    patch:
+      summary: Update profile (full_name, username, avatar_url + csrf_token)
+      responses:
+        '200': {description: Updated}
+  /me/settings:
+    patch:
+      summary: Update preferences (theme, caret_style, font_family, sound_enabled, smooth_caret + csrf_token)
+      responses:
+        '200': {description: Updated}
+  /me/password:
+    put:
+      summary: Change password (current_password, new_password + csrf_token)
+      responses:
+        '200': {description: Updated}

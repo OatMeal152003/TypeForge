@@ -1,0 +1,7 @@
+# TypeForge uploads guard: avatars are images only — never execute scripts here.
+<IfModule mod_php.c>
+php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|phtml|phar|cgi|pl|py|sh)$">
+Require all denied
+</FilesMatch>

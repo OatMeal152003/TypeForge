@@ -1,0 +1,89 @@
+erDiagram
+    USERS ||--o{ TYPING_SESSIONS : "records"
+    USERS ||--o{ USER_ACHIEVEMENTS : "earns"
+    USERS ||--oI USER_SETTINGS : "configures"
+    USERS ||--o{ DAILY_ACTIVITY : "aggregates"
+    TYPING_TEXTS ||--o{ TYPING_SESSIONS : "provides text"
+    ACHIEVEMENTS ||--o{ USER_ACHIEVEMENTS : "granted in"
+
+    USERS {
+        int id PK
+        string full_name
+        string username
+        string email
+        string password_hash
+        string profile_picture
+        enum role
+        enum status
+        datetime created_at
+        datetime updated_at
+    }
+
+    TYPING_TEXTS {
+        int id PK
+        enum category
+        enum difficulty
+        string title
+        text content
+        int length_words
+        boolean is_active
+        datetime created_at
+    }
+
+    TYPING_SESSIONS {
+        bigint id PK
+        int user_id FK
+        int text_id FK
+        enum mode
+        int mode_value
+        decimal wpm
+        decimal raw_wpm
+        decimal accuracy
+        int duration_seconds
+        int total_chars
+        int correct_chars
+        int incorrect_chars
+        int corrected_errors
+        json key_errors
+        datetime created_at
+    }
+
+    ACHIEVEMENTS {
+        int id PK
+        string code
+        string title
+        string description
+        string icon
+        enum criteria_type
+        decimal criteria_value
+        int points
+    }
+
+    USER_ACHIEVEMENTS {
+        int id PK
+        int user_id FK
+        int achievement_id FK
+        datetime unlocked_at
+    }
+
+    USER_SETTINGS {
+        int id PK
+        int user_id FK
+        string theme
+        int default_test_mode_value
+        string default_test_mode
+        boolean sound_enabled
+        boolean live_wpm_enabled
+        datetime updated_at
+    }
+
+    DAILY_ACTIVITY {
+        bigint id PK
+        int user_id FK
+        date activity_date
+        int tests_completed
+        int total_time_seconds
+        decimal avg_wpm
+        decimal max_wpm
+        decimal avg_accuracy
+    }

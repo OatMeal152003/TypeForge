@@ -1,0 +1,6 @@
+.env
+.sauron/backups/
+backups/
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+!uploads/avatars/.htaccess

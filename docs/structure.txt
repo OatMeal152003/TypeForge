@@ -1,0 +1,36 @@
+typing-master/
+├── api/
+│   ├── get-leaderboard.php
+│   ├── get-statistics.php
+│   ├── get-typing-text.php
+│   └── save-session.php
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       ├── app.js
+│       ├── charts.js
+│       └── typing-engine.js
+├── config/
+│   └── database.php
+├── includes/
+│   ├── auth.php
+│   ├── footer.php
+│   ├── functions.php
+│   ├── header.php
+│   └── sidebar.php
+├── admin/
+│   ├── achievements.php
+│   ├── dashboard.php
+│   ├── typing-texts.php
+│   └── users.php
+├── dashboard.php
+├── history.php
+├── index.php
+├── leaderboard.php
+├── login.php
+├── logout.php
+├── profile.php
+├── register.php
+├── statistics.php
+└── typing-test.php
